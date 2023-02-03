@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import * as React from 'react'
+import GlobalStyles from './components/layout/GlobalStyles'
+import LoginPage from './pages/Login'
+import MyPage from './pages/Home'
+import {
+  Route,
+  createRoutesFromElements,
+  createBrowserRouter,
+  RouterProvider,
+} from 'react-router-dom'
 
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <React.Fragment>
+      <Route path='/' element={<LoginPage />} />
+      <Route path='/home' element={<MyPage />} />
+    </React.Fragment>
+  )
+)
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <React.Fragment>
+      <GlobalStyles />
+      <RouterProvider router={router} />
+    </React.Fragment>
+  )
 }
 
-export default App;
+export default App
