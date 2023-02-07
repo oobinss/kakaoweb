@@ -16,6 +16,7 @@ body {
   width:100%;
   display:grid;
   background-color: grey;
+  
 }
 
 h2, p {

@@ -9,10 +9,12 @@ import Footer from '../components/Login/Footer'
 const LoginPage = () => {
   const [isIdFocus, setIsIdFocus] = useState(false)
   const [isPasswordFocus, setIsPasswordFocus] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [userId, setUserId] = useState('')
   const [userPassword, setUserPassword] = useState('')
   const idInputRef = useRef()
   const passwordInputRef = useRef()
+  const dataDB = process.env.REACT_APP_DB
 
   const inputFocusHandler = (event) => {
     if (event.target.id === 'email') {
@@ -31,10 +33,28 @@ const LoginPage = () => {
       setIsPasswordFocus(false)
     }
   }
-  const submitHandler = (event) => {
+
+  const submitHandler = async (event) => {
     event.preventDefault()
     const enteredId = idInputRef.current.value
     const enteredPassword = passwordInputRef.current.value
+
+    try {
+      setIsLoading(true)
+      await fetch(dataDB, {
+        method: 'POST',
+        body: JSON.stringify({
+          id: enteredId,
+          password: enteredPassword,
+        }),
+      })
+
+      setIsLoading(false)
+      setUserId('')
+      setUserPassword('')
+    } catch (err) {
+      throw new Error(err + '에러 발생')
+    }
   }
 
   const idChangeHandler = (event) => {
@@ -43,6 +63,23 @@ const LoginPage = () => {
 
   const passwordChangeHandler = (event) => {
     setUserPassword(event.target.value)
+  }
+
+  const loginHandler = async () => {
+    const enteredId = idInputRef.current.value
+    const enteredPassword = passwordInputRef.current.value
+
+    const response = await fetch(dataDB)
+    const data = await response.json()
+
+    const arrayData = Object.values(data)
+
+    const UserData = arrayData.find((userid) => userid.id === enteredId)
+    if (UserData.id === enteredId && UserData.password === enteredPassword) {
+      console.log('로그인 성공')
+    } else {
+      throw new Error('로그인 실패')
+    }
   }
   return (
     <LoginBox>
@@ -75,8 +112,9 @@ const LoginPage = () => {
           onBlur={inputBlurHandler}
         />
 
-        <Button>Log In</Button>
-        <Button type='submit'>Sign Up</Button>
+        <Button onClick={loginHandler}>Log In</Button>
+        {!isLoading && <Button type='submit'>Sign Up</Button>}
+        {isLoading && <p>Sending request...</p>}
       </StyleForm>
       <Footer />
     </LoginBox>
@@ -86,7 +124,6 @@ const LoginPage = () => {
 export default LoginPage
 const LoginBox = styled.div`
   display: grid;
-  align-content: space-between;
   margin: 3rem auto;
   width: 95%;
   max-width: 35rem;
@@ -96,6 +133,7 @@ const LoginBox = styled.div`
   text-align: center;
   height: 60vh;
   justify-items: center;
+  align-content: stretch;
 `
 
 const StyleForm = styled.form`

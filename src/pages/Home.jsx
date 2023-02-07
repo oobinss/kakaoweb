@@ -4,6 +4,7 @@ import { BiSearch } from 'react-icons/bi'
 import { HiOutlineMusicalNote } from 'react-icons/hi2'
 import { BsChatDots, BsPerson, BsChatFill, BsThreeDots } from 'react-icons/bs'
 import { AiOutlineSetting } from 'react-icons/ai'
+import { RiKakaoTalkFill } from 'react-icons/ri'
 import styled from 'styled-components'
 import MaPageChat from '../components/Mypage/MyPageChat'
 
@@ -11,38 +12,39 @@ const MyPage = () => {
   const data = [
     {
       id: 1,
-      img: 3,
+      img: <RiKakaoTalkFill size='45' />,
       name: 'kakao',
-      lastChat: 'hi my name is kakao',
+      lastChat: 'Please check My Kakao Account info',
       lastTime: '3:30',
-      unreadNum: 1,
-    },
-    {
-      id: 2,
-      img: 4,
-      name: 'kakao3',
-      lastChat: 'hi my name is kakao5',
-      lastTime: '3:40',
-      unreadNum: 2,
+      unreadMsg: 1,
     },
   ]
 
   return (
     <HomeBox>
       <Header />
+
       <MenuBox>
-        Chats
-        <BiSearch />
-        <BsChatDots />
-        <HiOutlineMusicalNote />
-        <AiOutlineSetting />
+        <HomeTitle>Chats</HomeTitle>
+        <BiSearch size='25' />
+        <BsChatDots size='25' />
+        <HiOutlineMusicalNote size='25' />
+        <AiOutlineSetting size='25' />
       </MenuBox>
-      <MaPageChat users={data} />
+
+      <ChatBox>
+        <MaPageChat users={data} />
+      </ChatBox>
+
       <MyBox>
-        <BsPerson />
-        <BsChatFill />
-        <BiSearch />
-        <BsThreeDots />
+        <BsPerson size='30' />
+        <AfterBox>
+          <BsChatFill size='30' />
+        </AfterBox>
+        <BiSearch size='30' />
+        <AddMenu>
+          <BsThreeDots size='30' />
+        </AddMenu>
       </MyBox>
     </HomeBox>
   )
@@ -52,30 +54,73 @@ export default MyPage
 
 const HomeBox = styled.div`
   display: grid;
-  align-content: space-between;
   margin: 3rem auto;
   width: 95%;
   max-width: 35rem;
   border-radius: 6px;
   background-color: white;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  padding: 1rem;
+  padding: 0 1rem;
   text-align: center;
-  height: 50vh;
+  height: 60vh;
 `
 
 const MenuBox = styled.div`
-  border: 1px solid red;
   display: grid;
   width: 100%;
   grid-template-columns: 7fr 1fr 1fr 1fr 1fr;
   justify-items: start;
+
+  height: 5vh;
+  justify-self: start;
   align-items: center;
+`
+const ChatBox = styled.div`
+  display: grid;
+  height: 45vh;
+  align-content: start;
+`
+const HomeTitle = styled.p`
+  font-size: 2rem;
+  font-weight: bold;
 `
 
 const MyBox = styled.div`
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  border: 1px solid red;
+
+  align-content: end;
+  height: 3vh;
+  justify-items: center;
+`
+const AfterBox = styled.div`
+  &:after {
+    content: '1';
+    background-color: red;
+    color: white;
+    margin-left: 10px;
+    display: grid;
+    border-radius: 50px;
+    position: relative;
+    width: 1.5rem;
+    height: 1.5rem;
+    top: -3rem;
+    left: 0.7rem;
+  }
+`
+const AddMenu = styled.div`
+  &:after {
+    content: '';
+    background-color: red;
+    color: white;
+    margin-left: 10px;
+    display: grid;
+    border-radius: 50px;
+    position: relative;
+    width: 0.3rem;
+    height: 0.3rem;
+    top: -2.3rem;
+    left: 1rem;
+  }
 `

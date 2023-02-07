@@ -4,45 +4,39 @@ import { RiRotateLockFill, RiBatteryLowLine } from 'react-icons/ri'
 const Header = () => {
   return (
     <HeaderBox>
-      <HeaderUl>
-        <li>
-          No Service
-          <BsWifi2 />
-        </li>
-        <li>18:43</li>
-        <li>
-          <RiRotateLockFill />
-          11%
-          <RiBatteryLowLine />
-          <BsFillLightningChargeFill />
-        </li>
-      </HeaderUl>
+      <WifiMenu>
+        No Service
+        <BsWifi2 size='20' />
+      </WifiMenu>
+      <div>18:43</div>
+      <HeaderList>
+        <RiRotateLockFill size='20' />
+        11%
+        <RiBatteryLowLine size='20' />
+        <BsFillLightningChargeFill size='20' />
+      </HeaderList>
     </HeaderBox>
   )
 }
 
-// const HeaderBox = styled.div`
-//   height: 2vh;
-//   width: 100%;
-//   justify-content: row;
-// `
-
-// const HeaderUl = styled.ul`
-//   display: flex;
-//   justify-content: space-between;
-//   list-style: none;
-// `
 export default Header
 
 const HeaderBox = styled.div`
   display: grid;
   height: 2vh;
   width: 100%;
+  grid-template-columns: 1fr 1fr 1fr;
 `
 
-const HeaderUl = styled.ul`
+const WifiMenu = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  list-style: none;
-  justify-items: center;
+  justify-content: start;
+  grid-template-columns: 1fr 1fr;
+`
+
+const HeaderList = styled.div`
+  display: grid;
+  align-items: center;
+  justify-content: end;
+  grid-template-columns: 1.5rem 2.2rem 1.5rem 1.5rem;
 `

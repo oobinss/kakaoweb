@@ -32,11 +32,12 @@ const InputBox = styled.div`
     border-bottom: 1px solid grey;
     font-size: 1.5rem;
     height: 3rem;
+    cursor: pointer;
   }
   input:focus {
     outline: none;
-    border-color: green;
-    color: blue;
+    border-color: ;
+    border-bottom: 0.5rem solid gray;
   }
 `
 const InputLabel = styled.label`
@@ -47,4 +48,5 @@ const InputLabel = styled.label`
   justify-content: start;
   position: relative;
   height: 0px;
+  cursor: pointer;
 `

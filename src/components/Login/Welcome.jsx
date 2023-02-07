@@ -11,14 +11,7 @@ const Welcome = () => {
     </WelcomeBox>
   )
 }
-// height: 20vh;
-// display: grid;
-// justify-content: center;
-// align-content: space-evenly;
-// justify-items: center;
-// p {
-//   color: grey;
-// }
+
 export default Welcome
 
 const WelcomeBox = styled.div``
