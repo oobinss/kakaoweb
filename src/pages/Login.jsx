@@ -1,11 +1,12 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useContext } from 'react'
 import Welcome from '../components/Login/Welcome'
 import Header from '../components/layout/Header'
 import Input from '../components/UI/Input'
 import Button from '../components/UI/Button'
 import styled from 'styled-components'
 import Footer from '../components/Login/Footer'
-
+import FormContext from '../store/context'
+import { useNavigate } from 'react-router-dom'
 const LoginPage = () => {
   const [isIdFocus, setIsIdFocus] = useState(false)
   const [isPasswordFocus, setIsPasswordFocus] = useState(false)
@@ -14,7 +15,9 @@ const LoginPage = () => {
   const [userPassword, setUserPassword] = useState('')
   const idInputRef = useRef()
   const passwordInputRef = useRef()
-  const dataDB = process.env.REACT_APP_DB
+  const firebaseKey = process.env.REACT_APP_FIREBASE_KEY
+  const Ctx = useContext(FormContext)
+  const navigate = useNavigate()
 
   const inputFocusHandler = (event) => {
     if (event.target.id === 'email') {
@@ -36,25 +39,28 @@ const LoginPage = () => {
 
   const submitHandler = async (event) => {
     event.preventDefault()
-    const enteredId = idInputRef.current.value
+
+    const enteredEmail = idInputRef.current.value
     const enteredPassword = passwordInputRef.current.value
 
-    try {
-      setIsLoading(true)
-      await fetch(dataDB, {
+    setIsLoading(true)
+    await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebaseKey}`,
+      {
         method: 'POST',
         body: JSON.stringify({
-          id: enteredId,
+          email: enteredEmail,
           password: enteredPassword,
+          returnSecureToken: true,
         }),
-      })
-
-      setIsLoading(false)
-      setUserId('')
-      setUserPassword('')
-    } catch (err) {
-      throw new Error(err + '에러 발생')
-    }
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+    setIsLoading(false)
+    setUserId('')
+    setUserPassword('')
   }
 
   const idChangeHandler = (event) => {
@@ -69,17 +75,23 @@ const LoginPage = () => {
     const enteredId = idInputRef.current.value
     const enteredPassword = passwordInputRef.current.value
 
-    const response = await fetch(dataDB)
+    const response = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseKey}`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          email: enteredId,
+          password: enteredPassword,
+          returnSecureToken: true,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
     const data = await response.json()
-
-    const arrayData = Object.values(data)
-
-    const UserData = arrayData.find((userid) => userid.id === enteredId)
-    if (UserData.id === enteredId && UserData.password === enteredPassword) {
-      console.log('로그인 성공')
-    } else {
-      throw new Error('로그인 실패')
-    }
+    Ctx.login(data.idToken)
+    navigate('/home')
   }
   return (
     <LoginBox>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext } from 'react'
 import Header from '../components/layout/Header'
 import { BiSearch } from 'react-icons/bi'
 import { HiOutlineMusicalNote } from 'react-icons/hi2'
@@ -8,7 +8,11 @@ import { RiKakaoTalkFill } from 'react-icons/ri'
 import styled from 'styled-components'
 import MaPageChat from '../components/Mypage/MyPageChat'
 
+import FormContext from '../store/context'
+
 const MyPage = () => {
+  const Ctx = useContext(FormContext)
+  const isLoggedIn = Ctx.isLoggedIn
   const data = [
     {
       id: 1,
@@ -89,12 +93,17 @@ const MyBox = styled.div`
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-
+  align-items: end
   align-content: end;
   height: 3vh;
   justify-items: center;
+  align-content: center;
+  align-items: end;
 `
 const AfterBox = styled.div`
+  display: grid;
+  grid-template-rows: 100% 0%;
+  align-items: end;
   &:after {
     content: '1';
     background-color: red;
@@ -105,11 +114,14 @@ const AfterBox = styled.div`
     position: relative;
     width: 1.5rem;
     height: 1.5rem;
-    top: -3rem;
+    top: -1rem;
     left: 0.7rem;
   }
 `
 const AddMenu = styled.div`
+  display: grid;
+  grid-template-rows: 100%;
+  align-items: end;
   &:after {
     content: '';
     background-color: red;
@@ -120,7 +132,7 @@ const AddMenu = styled.div`
     position: relative;
     width: 0.3rem;
     height: 0.3rem;
-    top: -2.3rem;
+    top: -1.7rem;
     left: 1rem;
   }
 `
