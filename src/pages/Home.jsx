@@ -11,8 +11,6 @@ import MaPageChat from '../components/Mypage/MyPageChat'
 import FormContext from '../store/context'
 
 const MyPage = () => {
-  const Ctx = useContext(FormContext)
-  const isLoggedIn = Ctx.isLoggedIn
   const data = [
     {
       id: 1,
@@ -28,13 +26,13 @@ const MyPage = () => {
     <HomeBox>
       <Header />
 
-      <MenuBox>
+      <MenuNav>
         <HomeTitle>Chats</HomeTitle>
         <BiSearch size='25' />
         <BsChatDots size='25' />
         <HiOutlineMusicalNote size='25' />
         <AiOutlineSetting size='25' />
-      </MenuBox>
+      </MenuNav>
 
       <ChatBox>
         <MaPageChat users={data} />
@@ -69,7 +67,7 @@ const HomeBox = styled.div`
   height: 60vh;
 `
 
-const MenuBox = styled.div`
+const MenuNav = styled.div`
   display: grid;
   width: 100%;
   grid-template-columns: 7fr 1fr 1fr 1fr 1fr;
@@ -79,7 +77,7 @@ const MenuBox = styled.div`
   justify-self: start;
   align-items: center;
 `
-const ChatBox = styled.div`
+const ChatBox = styled.main`
   display: grid;
   height: 45vh;
   align-content: start;

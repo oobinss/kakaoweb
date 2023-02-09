@@ -34,10 +34,12 @@ const InputBox = styled.div`
     height: 3rem;
     cursor: pointer;
   }
+  input:hover {
+    border-bottom: 5px solid gray;
+  }
   input:focus {
     outline: none;
-    border-color: ;
-    border-bottom: 0.5rem solid gray;
+    border-bottom: 5px solid gray;
   }
 `
 const InputLabel = styled.label`
@@ -49,4 +51,8 @@ const InputLabel = styled.label`
   position: relative;
   height: 0px;
   cursor: pointer;
+
+  &:hover {
+    color: black;
+  }
 `

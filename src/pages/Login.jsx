@@ -4,15 +4,16 @@ import Header from '../components/layout/Header'
 import Input from '../components/UI/Input'
 import Button from '../components/UI/Button'
 import styled from 'styled-components'
-import Footer from '../components/Login/Footer'
+import Footer from '../components/layout/Footer'
 import FormContext from '../store/context'
 import { useNavigate } from 'react-router-dom'
+import ErrorModal from '../components/UI/ErrorModal'
+
 const LoginPage = () => {
   const [isIdFocus, setIsIdFocus] = useState(false)
   const [isPasswordFocus, setIsPasswordFocus] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [userId, setUserId] = useState('')
-  const [userPassword, setUserPassword] = useState('')
+  const [error, setError] = useState()
   const idInputRef = useRef()
   const passwordInputRef = useRef()
   const firebaseKey = process.env.REACT_APP_FIREBASE_KEY
@@ -29,10 +30,13 @@ const LoginPage = () => {
   }
 
   const inputBlurHandler = (event) => {
-    if (event.target.id === 'email' && userId === '') {
+    if (event.target.id === 'email' && idInputRef.current.value === '') {
       setIsIdFocus(false)
     }
-    if (event.target.id === 'password' && userPassword === '') {
+    if (
+      event.target.id === 'password' &&
+      passwordInputRef.current.value === ''
+    ) {
       setIsPasswordFocus(false)
     }
   }
@@ -42,94 +46,117 @@ const LoginPage = () => {
 
     const enteredEmail = idInputRef.current.value
     const enteredPassword = passwordInputRef.current.value
-
+    if (
+      enteredEmail.trim().length === 0 ||
+      enteredPassword.trim().length === 0
+    ) {
+      setError({
+        title: 'Invalid input',
+        message: 'Please enter a valid email and password',
+      })
+    }
     setIsLoading(true)
-    await fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebaseKey}`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          email: enteredEmail,
-          password: enteredPassword,
-          returnSecureToken: true,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    )
+    try {
+      await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebaseKey}`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            email: enteredEmail,
+            password: enteredPassword,
+            returnSecureToken: true,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      idInputRef.current.value = ''
+      passwordInputRef.current.value = ''
+    } catch (err) {
+      setError({
+        title: err.name,
+        message: err.message,
+      })
+    }
     setIsLoading(false)
-    setUserId('')
-    setUserPassword('')
   }
-
-  const idChangeHandler = (event) => {
-    setUserId(event.target.value)
+  const errorHandler = () => {
+    setError(null)
   }
-
-  const passwordChangeHandler = (event) => {
-    setUserPassword(event.target.value)
-  }
-
   const loginHandler = async () => {
     const enteredId = idInputRef.current.value
     const enteredPassword = passwordInputRef.current.value
-
-    const response = await fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseKey}`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          email: enteredId,
-          password: enteredPassword,
-          returnSecureToken: true,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    try {
+      const response = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseKey}`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            email: enteredId,
+            password: enteredPassword,
+            returnSecureToken: true,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      const data = await response.json()
+      if (!localStorage.getItem('token') === false) {
+        Ctx.login(data.idToken)
+        navigate('/home')
       }
-    )
-    const data = await response.json()
-    Ctx.login(data.idToken)
-    navigate('/home')
+    } catch (err) {
+      setError({
+        title: err.name,
+        message: err.message,
+      })
+    }
   }
   return (
-    <LoginBox>
-      <Header />
-      <Welcome />
-      <StyleForm onSubmit={submitHandler}>
-        <Input
-          id='email'
-          type='email'
-          value={userId}
-          label={isIdFocus ? '' : 'Email or phone number'}
-          name='email'
-          required
-          ref={idInputRef}
-          onFocus={inputFocusHandler}
-          onChange={idChangeHandler}
-          onBlur={inputBlurHandler}
+    <div>
+      {error && (
+        <ErrorModal
+          title={error.title}
+          message={error.message}
+          onClick={errorHandler}
         />
-        <Input
-          id='password'
-          label={isPasswordFocus ? '' : 'Password'}
-          type='password'
-          name='password'
-          minLength={8}
-          required
-          ref={passwordInputRef}
-          onFocus={inputFocusHandler}
-          value={userPassword}
-          onChange={passwordChangeHandler}
-          onBlur={inputBlurHandler}
-        />
+      )}
+      <LoginBox>
+        <Header />
+        <Welcome />
+        <StyleForm onSubmit={submitHandler}>
+          <Input
+            id='email'
+            type='email'
+            label={isIdFocus ? '' : 'Email or phone number'}
+            name='email'
+            required
+            ref={idInputRef}
+            onFocus={inputFocusHandler}
+            onBlur={inputBlurHandler}
+          />
+          <Input
+            id='password'
+            label={isPasswordFocus ? '' : 'Password'}
+            type='password'
+            name='password'
+            minLength={8}
+            required
+            ref={passwordInputRef}
+            onFocus={inputFocusHandler}
+            onBlur={inputBlurHandler}
+          />
 
-        <Button onClick={loginHandler}>Log In</Button>
-        {!isLoading && <Button type='submit'>Sign Up</Button>}
-        {isLoading && <p>Sending request...</p>}
-      </StyleForm>
-      <Footer />
-    </LoginBox>
+          <Button onClick={loginHandler}>Log In</Button>
+          {!isLoading && <Button type='submit'>Sign Up</Button>}
+          {isLoading && <p>Sending request...</p>}
+        </StyleForm>
+        <Footer />
+      </LoginBox>
+    </div>
   )
 }
 

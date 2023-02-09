@@ -4,7 +4,6 @@ import LoginPage from './pages/Login'
 import MyPage from './pages/Home'
 import {
   Route,
-  Routes,
   createRoutesFromElements,
   createBrowserRouter,
   RouterProvider,
